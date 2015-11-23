@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta charset="utf-8">
+    <style>
+      @font-face{
+        font-family: 'Droid Serif';
+        src: url('DroidSerif.ttf');
+      }
+      @font-face{
+        font-family: 'Yanone Kaffeesatz';
+        src: url('YanoneKaffeesatz-Regular.ttf');
+      }
+      @font-face{
+        font-family: 'Ubuntu Mono';
+        src: url('UbuntuMono-Regular.ttf');
+      }
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+	  
+	  .column {float:left}
+
+	  .split-50 .column {width: 50%}
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# Javascript
+## Promises
+### Miguel Galante
+
+---
+
+# Agenda
+
+1. Introduction
+2. Deep-dive
+3. ...
+
+---
+
+## Callbacks
+
+Para trabajar con funciones asíncronas se utilizaban callbacks, generado anidamiento y código dificil de leer.
+
+```javascript
+$.ajax({
+	url: "/login",
+	data: {
+		user: "user01", 
+		password: "test01"
+	},
+	success: function(resp){		
+		//Obtener profile
+		$.ajax({
+			url: "/profile",
+			data: resp.token,	
+			success: function(data){		
+				//Mostrar informacion del usuario			
+				
+			}
+		});		
+	}
+});
+```
+
+---
+## Promises
+Los promises son una construcción que se venia usando desde la década del 80 en otros lenguajes. 
+
+```javascript
+$.ajax({
+	url: "/login",
+	data: {
+		user: "user01", 
+		password: "test01"
+	},
+}).then(function(resp){
+	return $.ajax({
+		url: "/profile",
+		data: resp.token
+	});
+}).then(function(resp){
+	//Mostrar informacion de login
+
+});
+```
+
+---
+class: split-50
+##¿Qué es una promesa?
+
+Una promesa es un objeto que representa el valor de retorno (o la exception lanzada) que una función puede eventualmente proveer.(kriskowal Q)
+
+
+####Callback Version
+```javascript
+ClientDAO.getClientList({
+	done: function(clientList){
+		console.log(clientList);
+	},
+	fail: function(error){
+		console.log(error);
+});
+```
+####Promise Version
+```javascript
+var clientListPromise = ClientDAO.getClientList();
+
+clientListPromise.done(function(clientList){
+	console.log(clientList);
+}).fail(function(error){
+	console.log(error);
+});
+```
+
+---
+class: split-50
+##¿Cómo creamos una promesa?
+
+.column[
+```javascript
+var wait = function(delay){
+	var dfd = $.Deferred();
+	
+	setTimeout(function(){
+		console.log("Trabajo listo");
+		dfd.resolve();
+	},delay);
+	
+	console.log("Retornando Promesa");
+	return dfd.promise();
+}
+
+
+wait(1000).done(function(){
+	console.log("Fin!");
+});
+
+console.log("Callback enganchado");
+```
+]
+.column[
+```javascript
+// Retornando Promesa
+// Callback enganchado
+// Trabajo Listo
+// Fin
+```
+]
+
+---
+class: split-50
+
+.column[
+## Deferred Object 
+### Generador
+* resolve(valorDeRetorno)
+* reject(error)
+Un diferido representa un trabajo que aun no a terminado.
+]
+.column[
+## Promise
+### Consumidor
+* done(callback)
+* fail(callback)
+Una promesa representa un valor que aún no se sabe.
+]
+---
+
+
+class: center, middle
+# Sarasa
+## Miguel Galanet
+---
+class: center, middle
+# Gracias!
+Miguel Galante 
+
+email: mgalante@gmail.com 
+
+twitter: miguelgalante
+
+### bibliografia
+* http://blog.mediumequalsmessage.com/promise-deferred-objects-in-javascript-pt1-theory-and-semantics
+* https://api.jquery.com/category/deferred-object/
+* https://github.com/kriskowal/q
+* https://docs.angularjs.org/api/ng/service/$q
+* http://www.2ality.com/2014/10/es6-promises-api.html
+---
+
+
+    </textarea>
+    <script src="remark-latest.min.js">
+    </script>
+    <script>
+	var slideshow = remark.create();
+    </script>
+  </body>
+</html>
